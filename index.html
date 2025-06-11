@@ -151,10 +151,12 @@
             flex-direction: row;
             column-gap: 4px;
             row-gap: 0px;
-            background-color: #d0e9ff;
+            background-color: #d6ecff;
             color: #555;
             flex-wrap: wrap;
             font-weight: 400;
+            line-height: 145%;
+            padding: 2px 6px;
         }
         .detail-same-ping:empty {
             display: none;
@@ -165,10 +167,12 @@
             flex-direction: row;
             column-gap: 6px;
             row-gap: 0px;
-            background-color: rgb(227, 210, 222);
+            background-color: #f4dced;
             color: #555;
             flex-wrap: wrap;
             font-weight: 400;
+            line-height: 145%;
+            padding: 2px 6px;
         }
 
         .detail-examples:empty {
@@ -270,6 +274,7 @@
             text-decoration: underline;
             text-underline-position: below;
             text-underline-offset: 2px;
+            color: #000;
         }
 
         #main-table a[href] {
@@ -344,6 +349,7 @@
             column-gap: 1px;
             row-gap: 1px;
             justify-content: space-between;
+            background-color: #fcfcfc;
         }
         
 
@@ -355,6 +361,8 @@
             align-items: center;
             flex-shrink: 1;
             outline: 1px solid #888;
+            place-self: center;
+            place-self: stretch;
         }
         .char-info-table-cell-r1 {
             font-weight: 600;
@@ -362,6 +370,16 @@
         }
         .char-info-table-cell-r2 {
             line-height: 135%;
+        }
+
+
+        .char-info-table-cell-r0 {
+            font-weight: 500;
+            flex: 1;
+            font-size: 180%;
+            place-self: center;
+            place-content: center;
+            line-height: 0;
         }
 
         span[data-source-page-no]{
@@ -377,6 +395,14 @@
             font-size: 80%;   
             line-height: 0;
             color:#666;
+        }
+
+        .char-info-table-cell.char-info-table-cell0 {
+            background-color: #222;
+            color: #eee;
+            padding: 0px 8px 4px 8px;
+            max-width: 38px;
+            box-sizing: border-box;
         }
 
     </style>
@@ -401,216 +427,252 @@
                 console.log(data_)
 
                 const keys = [
-        "字",
-        "部首",
-        "筆畫",
-        "字音分類",
-        "大五碼",
-        "倉頡碼",
-        "頻序",
-        "頻次",
-        "Unicode",
-        "漢語大字典",
-        "康熙字典",
-        "Matthews",
-        "普通話",
-        "英譯",
-        "配搭點"
-    ];
+                    "字",
+                    "部首",
+                    "筆畫",
+                    "字音分類",
+                    "大五碼",
+                    "倉頡碼",
+                    "頻序",
+                    "頻次",
+                    "Unicode",
+                    "漢語大字典",
+                    "康熙字典",
+                    "Matthews",
+                    "普通話",
+                    "英譯",
+                    "配搭點"
+                ];
 
-    const getVal = (x)=>{
-        if(typeof (x||0) ==='object' && x.length >=1 && x.join) x = x.join(', ');
-        if(x === null) x = "-"
-        return `${x}`;
-    }
-
-
-/*
-
-    const table = document.createElement('table');
-    table.id = "char-info";
-
-
-
-    const row1 = table.appendChild(document.createElement('tr'));
-    const row2 = table.appendChild(document.createElement('tr'));
-    const word = `${data_.字 || ""}`;
-    for(const key of keys){
-        if(key in data_){
-            row1.appendChild(document.createElement("th")).textContent = key;
-            const val = data_[key];
-            if(typeof (val || 0) === 'object' && val.length >= 1){
-                const div = row2.appendChild(document.createElement("div"));
-                div.classList.add('listing');
-                for(const p of val){
-                    div.appendChild(document.createElement("span")).textContent = getVal(p);
+                const getVal = (x) => {
+                    if (typeof (x || 0) === 'object' && x.length >= 1 && x.join) x = x.join(', ');
+                    if (x === null) x = "-"
+                    if (typeof x === 'string') x = x.replace(/&#(\d+);/g, (_, a) => String.fromCodePoint(+a));
+                    return `${x}`;
                 }
-            } else {
-                const td = document.createElement("td");
-                if (key === "英譯") td.classList.add("td-english");
-                if (key === "普通話") td.classList.add("td-pth");
-                row2.appendChild(td).textContent = getVal(val);
-                if (word.length === 1 && key === "康熙字典") {
-                    const m = /Pg\.(\d+)/.exec(`${val}`);
-                    if (m && +m[1] >= 1) {
-                        td.setAttribute('data-kangxi-url', 'https://www.kangxizidian.com/kxhans/' + encodeURIComponent(word) + "#cornerbody1")
+
+
+            /*
+
+                const table = document.createElement('table');
+                table.id = "char-info";
+
+
+
+                const row1 = table.appendChild(document.createElement('tr'));
+                const row2 = table.appendChild(document.createElement('tr'));
+                const word = `${data_.字 || ""}`;
+                for(const key of keys){
+                    if(key in data_){
+                        row1.appendChild(document.createElement("th")).textContent = key;
+                        const val = data_[key];
+                        if(typeof (val || 0) === 'object' && val.length >= 1){
+                            const div = row2.appendChild(document.createElement("div"));
+                            div.classList.add('listing');
+                            for(const p of val){
+                                div.appendChild(document.createElement("span")).textContent = getVal(p);
+                            }
+                        } else {
+                            const td = document.createElement("td");
+                            if (key === "英譯") td.classList.add("td-english");
+                            if (key === "普通話") td.classList.add("td-pth");
+                            row2.appendChild(td).textContent = getVal(val);
+                            if (word.length === 1 && key === "康熙字典") {
+                                const m = /Pg\.(\d+)/.exec(`${val}`);
+                                if (m && +m[1] >= 1) {
+                                    td.setAttribute('data-kangxi-url', 'https://www.kangxizidian.com/kxhans/' + encodeURIComponent(word) + "#cornerbody1")
+                                }
+                            }
+                            if (word.length === 1 && key === "漢語大字典") {
+                                const m = /Pg\.(\d+)/.exec(`${val}`);
+                                if (m && +m[1] >= 1) {
+                                    td.setAttribute('data-zdic-url', 'https://www.zdic.net/hant/' + encodeURIComponent(word) + "#bhbs")
+                                }
+                            }
+                            if (word.length === 1 && key === "Unicode"){
+
+                                const m = /^U\+[0-9A-F]{4}$/.exec(`${val}`);
+                                if(m && m[0]){
+                                    td.setAttribute('data-unicode-url', 'https://www.compart.com/en/unicode/' + m[0])
+                                }
+                                
+                            }
+                        }
                     }
                 }
-                if (word.length === 1 && key === "漢語大字典") {
-                    const m = /Pg\.(\d+)/.exec(`${val}`);
-                    if (m && +m[1] >= 1) {
-                        td.setAttribute('data-zdic-url', 'https://www.zdic.net/hant/' + encodeURIComponent(word) + "#bhbs")
+
+
+                */
+
+                const table = document.createElement('div');
+                table.id = "char-info";
+                table.classList.add("char-info-table");
+                const word = `${data_.字 || ""}`;
+                for(const key of keys){
+                    if(key === '字'){
+                        const tableCell = table.appendChild(document.createElement('div'));
+                        tableCell.classList.add("char-info-table-cell");
+                        const row2 = document.createElement('div');
+                        row2.classList.add("char-info-table-cell-r0");
+                        tableCell.appendChild(row2);
+                        row2.textContent = word;
+                        tableCell.classList.add("char-info-table-cell0")
+                        continue;
+                    }
+                    if (key in data_) {
+                        const val = data_[key];
+                        const tableCell = table.appendChild(document.createElement('div'));
+                        tableCell.classList.add("char-info-table-cell");
+                        const row1 = document.createElement('div');
+                        const row2 = document.createElement('div');
+                        row1.classList.add("char-info-table-cell-r1");
+                        row2.classList.add("char-info-table-cell-r2");
+                        row1.textContent = key;
+                        row2.textContent = getVal(val);
+                        tableCell.appendChild(row1);
+                        tableCell.appendChild(row2);
+
+                        let td = row2;
+
+                        if (word.length === 1 && key === "康熙字典") {
+                            const m = /Pg\.(\d+)/.exec(`${val}`);
+                            if (m && +m[1] >= 1) {
+                                td.setAttribute('data-kangxi-url', 'https://www.kangxizidian.com/kxhans/' + encodeURIComponent(word) + "#cornerbody1")
+                            }
+                        }
+                        if (word.length === 1 && key === "漢語大字典") {
+                            const m = /Pg\.(\d+)/.exec(`${val}`);
+                            if (m && +m[1] >= 1) {
+                                td.setAttribute('data-zdic-url', 'https://www.zdic.net/hant/' + encodeURIComponent(word) + "#bhbs")
+                            }
+                        }
+                        if (word.length === 1 && key === "Unicode") {
+
+                            const m = /^U\+[0-9A-F]{4}$/.exec(`${val}`);
+                            if (m && m[0]) {
+                                td.setAttribute('data-unicode-url', 'https://www.compart.com/en/unicode/' + m[0])
+                            }
+
+                        }
+
                     }
                 }
-                if (word.length === 1 && key === "Unicode"){
 
-                    const m = /^U\+[0-9A-F]{4}$/.exec(`${val}`);
-                    if(m && m[0]){
-                        td.setAttribute('data-unicode-url', 'https://www.compart.com/en/unicode/' + m[0])
-                    }
+                const createPing = (x)=>{
                     
+                    const div = document.createElement('div');
+                    div.classList.add('ping')
+                    div.appendChild(document.createElement('b')).textContent = x.聲母;
+                    div.appendChild(document.createElement('b')).textContent = x.韻母;
+                    div.appendChild(document.createElement('b')).textContent = x.聲調;
+                    return div;
                 }
-            }
-        }
-    }
 
 
-    */
-
-    const table = document.createElement('div');
-    table.id = "char-info";
-    table.classList.add("char-info-table");
-    for(const key of keys){
-        if (key in data_) {
-            const val = data_[key];
-            const tableCell = table.appendChild(document.createElement('div'));
-            tableCell.classList.add("char-info-table-cell");
-            const row1 = document.createElement('div');
-            const row2 = document.createElement('div');
-            row1.classList.add("char-info-table-cell-r1");
-            row2.classList.add("char-info-table-cell-r2");
-            row1.textContent = key;
-            row2.textContent = getVal(val);
-            tableCell.appendChild(row1);
-            tableCell.appendChild(row2);
-        }
-    }
-
-    const createPing = (x)=>{
-        
-        const div = document.createElement('div');
-        div.classList.add('ping')
-        div.appendChild(document.createElement('b')).textContent = x.聲母;
-        div.appendChild(document.createElement('b')).textContent = x.韻母;
-        div.appendChild(document.createElement('b')).textContent = x.聲調;
-        return div;
-    }
-
-
-    const createVoiceButton = (audioURL) => {
-        const div = document.createElement('div');
-        audioURL = audioURL.replace('http://humanum.arts.cuhk.edu.hk/', 'https://humanum.arts.cuhk.edu.hk/')
-        div.setAttribute('data-audio-url', audioURL);
-        div.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" version="1.0" width="16" height="16" viewBox="0 0 75 75">
-        <path d="M39.389,13.769 L22.235,28.606 L6,28.606 L6,47.699 L21.989,47.699 L39.389,62.75 L39.389,13.769z" style="stroke:currentcolor;stroke-width:5;stroke-linejoin:round;fill:currentcolor;"/>
-        <path d="M48,27.6a19.5,19.5 0 0 1 0,21.4M55.1,20.5a30,30 0 0 1 0,35.6M61.6,14a38.8,38.8 0 0 1 0,48.6" style="fill:none;stroke:currentcolor;stroke-width:5;stroke-linecap:round"/>
-        </svg>`;
-        return div;
-    }
-
-    const createSourceField = (x)=>{
-        const div = document.createElement('div');
-        div.classList.add('voice-source');
-        for(const k of x){
-            const span = document.createElement('span');
-            const m = /([\s\S]*)\(p\.(\d+)\)$/.exec(k);
-            if(m && m[1] && +m[2] >=1 ){
-
-                span.setAttribute('data-source-page-no', m[2])
-                div.appendChild(span).textContent = m[1];
-            }else{
-            div.appendChild(span).textContent = k
-            }
-        }
-        return div;
-    }
-
-    const createRemarkContents = (contents) => {
-        if (typeof (contents || 0) !== 'object') contents = [contents];
-
-        const div = document.createElement('div');
-        div.classList.add('remark-contents');
-        for (const content of contents) {
-            const span = document.createElement('span');
-            span.classList.add('remark-content');
-            span.textContent = content;
-
-            div.appendChild(span)
-        }
-        return div;
-    }
-
-    const div = document.createElement('div');
-    div.id = 'char-details';
-    if(data_.發音){
-        const details = data_.發音;
-        for(const detail of details){
-            const detailDiv = div.appendChild(document.createElement('div'));
-            detailDiv.classList.add('char-detail');
-            const row1 = document.createElement('div');
-            row1.classList.add('char-detail-voice');
-            const pv = row1.appendChild(document.createElement('div'));
-            pv.classList.add('char-detail-ping-voice');
-            pv.appendChild(createPing(detail.音節));
-            pv.appendChild(createVoiceButton(detail.粵音));
-            row1.appendChild(pv);
-            row1.appendChild(createSourceField(detail.根據));
-     
-            detailDiv.appendChild(row1);
-
-            const row2 = document.createElement('div');
-            row2.classList.add('char-detail-more');
-            const samePing = row2.appendChild(document.createElement('div'));
-            samePing.classList.add('detail-same-ping');
-            if(detail.同音字){
-                for(const p of detail.同音字){
-                    const span = document.createElement('span');
-                    span.classList.add('char-clickable');
-                    samePing.appendChild(span).textContent = p;
+                const createVoiceButton = (audioURL) => {
+                    const div = document.createElement('div');
+                    audioURL = audioURL.replace('http://humanum.arts.cuhk.edu.hk/', 'https://humanum.arts.cuhk.edu.hk/')
+                    div.setAttribute('data-audio-url', audioURL);
+                    div.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" version="1.0" width="16" height="16" viewBox="0 0 75 75">
+                    <path d="M39.389,13.769 L22.235,28.606 L6,28.606 L6,47.699 L21.989,47.699 L39.389,62.75 L39.389,13.769z" style="stroke:currentcolor;stroke-width:5;stroke-linejoin:round;fill:currentcolor;"/>
+                    <path d="M48,27.6a19.5,19.5 0 0 1 0,21.4M55.1,20.5a30,30 0 0 1 0,35.6M61.6,14a38.8,38.8 0 0 1 0,48.6" style="fill:none;stroke:currentcolor;stroke-width:5;stroke-linecap:round"/>
+                    </svg>`;
+                    return div;
                 }
-            }
-            const examples = row2.appendChild(document.createElement('div'));
-            examples.classList.add('detail-examples');
-            if(detail.詞例){
-                for(const p of detail.詞例){
-                    examples.appendChild(document.createElement('span')).textContent = p;
+
+                const createSourceField = (x)=>{
+                    const div = document.createElement('div');
+                    div.classList.add('voice-source');
+                    for(const k of x){
+                        const span = document.createElement('span');
+                        const m = /([\s\S]*)\(p\.(\d+)\)$/.exec(k);
+                        if(m && m[1] && +m[2] >=1 ){
+
+                            span.setAttribute('data-source-page-no', m[2])
+                            div.appendChild(span).textContent = m[1];
+                        }else{
+                        div.appendChild(span).textContent = k
+                        }
+                    }
+                    return div;
                 }
-            }
-            
-            const remark = row2.appendChild(document.createElement('div'));
-            remark.classList.add('detail-remark');
-            if(detail.備註){
-                remark.appendChild(createRemarkContents(detail.備註));
-            }
 
-            row2.appendChild(samePing);
-            row2.appendChild(examples);
-            row1.appendChild(remark);
+                const createRemarkContents = (contents) => {
+                    if (typeof (contents || 0) !== 'object') contents = [contents];
 
-            // row2.appendChild()
-            detailDiv.appendChild(row2);
-        }
-    }
+                    const div = document.createElement('div');
+                    div.classList.add('remark-contents');
+                    for (const content of contents) {
+                        const span = document.createElement('span');
+                        span.classList.add('remark-content');
+                        span.textContent = content;
+
+                        div.appendChild(span)
+                    }
+                    return div;
+                }
+
+                const div = document.createElement('div');
+                div.id = 'char-details';
+                if(data_.發音){
+                    const details = data_.發音;
+                    for(const detail of details){
+                        const detailDiv = div.appendChild(document.createElement('div'));
+                        detailDiv.classList.add('char-detail');
+                        const row1 = document.createElement('div');
+                        row1.classList.add('char-detail-voice');
+                        const pv = row1.appendChild(document.createElement('div'));
+                        pv.classList.add('char-detail-ping-voice');
+                        pv.appendChild(createPing(detail.音節));
+                        pv.appendChild(createVoiceButton(detail.粵音));
+                        row1.appendChild(pv);
+                        row1.appendChild(createSourceField(detail.根據));
+                
+                        detailDiv.appendChild(row1);
+
+                        const row2 = document.createElement('div');
+                        row2.classList.add('char-detail-more');
+                        const samePing = row2.appendChild(document.createElement('div'));
+                        samePing.classList.add('detail-same-ping');
+                        if(detail.同音字){
+                            for(const p of detail.同音字){
+                                const span = document.createElement('span');
+                                span.classList.add('char-clickable');
+                                samePing.appendChild(span).textContent = p;
+                            }
+                        }
+                        const examples = row2.appendChild(document.createElement('div'));
+                        examples.classList.add('detail-examples');
+                        if(detail.詞例){
+                            for(const p of detail.詞例){
+                                examples.appendChild(document.createElement('span')).textContent = p;
+                            }
+                        }
+                        
+                        const remark = row2.appendChild(document.createElement('div'));
+                        remark.classList.add('detail-remark');
+                        if(detail.備註){
+                            remark.appendChild(createRemarkContents(detail.備註));
+                        }
+
+                        row2.appendChild(samePing);
+                        row2.appendChild(examples);
+                        row1.appendChild(remark);
+
+                        // row2.appendChild()
+                        detailDiv.appendChild(row2);
+                    }
+                }
 
 
 
 
 
-    part2.querySelector('#char-info')?.remove();
-    part2.querySelector('#char-details')?.remove();
+                part2.querySelector('#char-info')?.remove();
+                part2.querySelector('#char-details')?.remove();
 
-    part2.appendChild(table);
-    part2.appendChild(div);
+                part2.appendChild(table);
+                part2.appendChild(div);
 
 
 
@@ -1042,11 +1104,11 @@
 
   <table id="main-table">
     <colgroup>
-      <col style="width:42px;"> <!-- First column -->
-      <col style="width: calc((100vw - 42px) * 0.46);">
-      <col style="width: calc((100vw - 42px) * 0.14);">
-      <col style="width: calc((100vw - 42px) * 0.26);">
-      <col style="width: calc((100vw - 42px) * 0.14);">
+      <col style="width:38px;"> <!-- First column -->
+      <col style="width: calc((100vw - 38px) * 0.46);">
+      <col style="width: calc((100vw - 38px) * 0.14);">
+      <col style="width: calc((100vw - 38px) * 0.26);">
+      <col style="width: calc((100vw - 38px) * 0.14);">
     </colgroup>
     <thead>
       <tr>
