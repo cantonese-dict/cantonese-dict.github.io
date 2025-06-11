@@ -411,6 +411,7 @@
     </style>
     <script>
 
+        let lastSearch = '';
         function runInit(){
 
             const getData = (data)=>{
@@ -830,6 +831,7 @@
             const dataCacheMap = new Map();
 
             const runClickable = (text) => {
+              lastSearch = text;
               const cacheData = dataCacheMap.get(text);
               if (cacheData) {
                 dataLoaded(cacheData);
@@ -890,13 +892,12 @@
             // "https://www.cantobuddha.org/wordbook/detail.html?c=" + c
             // fetch("https://www.cantobuddha.org/wordbook/words/"+ c +"/"+ c +".js?v="+Date.now());
 
-            let lastSearch = '';
+            
             document.querySelector('#search').addEventListener('input', () => {
               const search = document.querySelector('#search');
               const text = search?.value;
               if (text && text.length === 1 && text.codePointAt(0) >= 0x3400) {
                 if (text !== lastSearch) {
-                  lastSearch = text;
                   runClickable(text);
                 }
               }
