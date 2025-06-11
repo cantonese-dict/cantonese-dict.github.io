@@ -447,7 +447,17 @@
                 const getVal = (x) => {
                     if (typeof (x || 0) === 'object' && x.length >= 1 && x.join) x = x.join(', ');
                     if (x === null) x = "-"
-                    if (typeof x === 'string') x = x.replace(/&#(\d+);/g, (_, a) => String.fromCodePoint(+a));
+                    if (typeof x === 'string') {
+                        x = x.replace(/&(nbsp|quot|apos|lt|gt);/g, (_, a) => {
+                            if (a === 'lt') return '<';
+                            if (a === 'gt') return '>';
+                            if (a === 'nbsp') return ' ';
+                            if (a === 'quot') return '"';
+                            if (a === 'apos') return '\'';
+                            return _;
+                        });
+                        x = x.replace(/&#(\d+);/g, (_, a) => String.fromCodePoint(+a));
+                    }
                     return `${x}`;
                 }
 
