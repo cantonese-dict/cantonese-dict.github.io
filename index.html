@@ -585,9 +585,8 @@
                     div.classList.add('voice-source');
                     for(const k of x){
                         const span = document.createElement('span');
-                        const m = /([\s\S]*)\(p\.(\d+)\)$/.exec(k);
-                        if(m && m[1] && +m[2] >=1 ){
-
+                        const m = /([\s\S]*)\(p\.([\d,]+)\)$/.exec(k);
+                        if(m && m[1] && m[2]){
                             span.setAttribute('data-source-page-no', m[2])
                             div.appendChild(span).textContent = m[1];
                         }else{
