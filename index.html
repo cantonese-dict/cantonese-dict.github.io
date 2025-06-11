@@ -81,15 +81,18 @@
             display: flex;
             flex-direction: row;
             place-items: center;
-            place-self: start;
-            gap: 8px;
+            place-self: stretch;
+            gap: 6px;
             padding-left: 4px;
+            flex-wrap: wrap;
+            flex-grow: 1;
+            place-content: space-between;
         }
         .char-detail-ping-voice {
             display: inline-flex;
             flex-direction: row;
             flex-wrap: nowrap;
-            width: 72px;
+            width: 68px;
             column-gap: 6px;
         }
 
@@ -137,8 +140,7 @@
             display: inline-flex;
             flex-direction: row;
             gap: 12px;
-            margin-left: 36px;
-            min-width: 320px;
+            flex-grow: 1;
         }
         .voice-source::before{
             content: "根據："
@@ -252,9 +254,11 @@
             color: inherit;
         }
 
+        /*
         #char-info td:last-child {
             line-height: 110%;
         }
+        */
 
         span.char-clickable {
             cursor:pointer;
@@ -315,6 +319,7 @@
             padding: 4px 6px;
         }
 
+        /*
         table#char-info th,
         table#char-info td {
             white-space: preserve nowrap;
@@ -324,9 +329,39 @@
             white-space: normal;
             white-space: break-spaces;
         }
+        */
         [data-zdic-url], [data-kangxi-url], [data-unicode-url] {
             cursor: pointer;
         }
+
+
+        .char-info-table{
+            display: flex;
+            flex-direction: row;
+            flex-wrap: wrap;
+            column-gap: 1px;
+            row-gap: 1px;
+            justify-content: space-between;
+        }
+        
+
+        .char-info-table-cell {
+            display: inline-flex;
+            flex-direction: column;
+            padding: 2px 2px;
+            flex-grow: 1;
+            align-items: center;
+            flex-shrink: 1;
+            outline: 1px solid #888;
+        }
+        .char-info-table-cell-r1 {
+            font-weight: 600;
+            line-height: 120%;
+        }
+        .char-info-table-cell-r2 {
+            line-height: 135%;
+        }
+
     </style>
     <script>
 
@@ -371,8 +406,15 @@
         if(x === null) x = "-"
         return `${x}`;
     }
+
+
+/*
+
     const table = document.createElement('table');
     table.id = "char-info";
+
+
+
     const row1 = table.appendChild(document.createElement('tr'));
     const row2 = table.appendChild(document.createElement('tr'));
     const word = `${data_.字 || ""}`;
@@ -412,6 +454,28 @@
                     
                 }
             }
+        }
+    }
+
+
+    */
+
+    const table = document.createElement('div');
+    table.id = "char-info";
+    table.classList.add("char-info-table");
+    for(const key of keys){
+        if (key in data_) {
+            const val = data_[key];
+            const tableCell = table.appendChild(document.createElement('div'));
+            tableCell.classList.add("char-info-table-cell");
+            const row1 = document.createElement('div');
+            const row2 = document.createElement('div');
+            row1.classList.add("char-info-table-cell-r1");
+            row2.classList.add("char-info-table-cell-r2");
+            row1.textContent = key;
+            row2.textContent = getVal(val);
+            tableCell.appendChild(row1);
+            tableCell.appendChild(row2);
         }
     }
 
@@ -517,7 +581,7 @@
 
 
 
-    part2.querySelector('table#char-info')?.remove();
+    part2.querySelector('#char-info')?.remove();
     part2.querySelector('#char-details')?.remove();
 
     part2.appendChild(table);
