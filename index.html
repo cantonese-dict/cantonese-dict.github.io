@@ -895,7 +895,7 @@
             
             document.querySelector('#search').addEventListener('input', () => {
               const search = document.querySelector('#search');
-              const text = search?.value;
+              const text = search?.value?.trim();
               if (text && text.length === 1 && text.codePointAt(0) >= 0x3400) {
                 if (text !== lastSearch) {
                   runClickable(text);
