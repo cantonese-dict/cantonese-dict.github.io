@@ -889,6 +889,15 @@
               }
             });
 
+            setTimeout(() => {
+              /** @type {HTMLInputElement} */
+              const select = document.querySelector('#search');
+              if (select) {
+                select.focus();
+                select.select();
+              }
+            });
+
         };
 
         let openedWindow = null;
