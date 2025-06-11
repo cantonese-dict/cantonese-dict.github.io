@@ -16,11 +16,6 @@
             margin: 0;
         }
 
-        .header {
-            display: flex;
-            flex-direction: row;
-        }
-
         input,
         body {
             font-family: "Noto Sans HK", sans-serif;
@@ -292,6 +287,13 @@
             display: flex;
             flex-direction: row;
             column-gap: 12px;
+            place-items: center;
+        }
+
+        input#search {
+          padding: 0;
+          margin: 0;
+          outline: 0;
         }
 
         div[data-audio-url] {
@@ -832,6 +834,18 @@
                 if (span) return span.textContent.trim();
             }
 
+            const runClickable = (text) => {
+              document.querySelector('#dataScript')?.remove();
+              const script = document.createElement('script');
+              script.id = 'dataScript';
+              script.addEventListener('load', () => {
+                dataLoaded();
+              });
+              const c = encodeURIComponent(text);
+              script.src = "https://www.cantobuddha.org/wordbook/words/" + c + "/" + c + ".js?v=" + Date.now();
+              document.head.appendChild(script);
+            }
+
             const table =document.querySelector("#main-table");
             const clickHandler =  (evt)=>{
                 const target = evt.target;
@@ -851,34 +865,7 @@
                 evt.stopImmediatePropagation();
                 evt.stopPropagation();
 
-
-                document.querySelector('#dataScript')?.remove();
-                const script = document.createElement('script');
-                script.id = 'dataScript';
-                script.addEventListener('load', ()=>{
-                    dataLoaded();
-                });
-
-                const text = linkChar;
-                const c = encodeURIComponent(text);
-
-                script.src= "https://www.cantobuddha.org/wordbook/words/"+ c +"/"+ c +".js?v="+Date.now();
-                
-                document.head.appendChild(script);
-
-                /*
-                const url = ("https://www.cantobuddha.org/wordbook/" + href);
-                let oldFrame = document.querySelector('#part2 iframe');
-                if(oldFrame){
-                    oldFrame.src = url;
-
-                }else{
-                    const iframe = document.querySelector('#part2').appendChild(document.createElement('iframe'));
-                    iframe.frameBorder="0"
-                    iframe.sandbox = "allow-scripts"
-                    iframe.src= url;
-                }
-                */
+                runClickable(linkChar);
 
             };
             table.addEventListener("click", clickHandler, true);
@@ -889,6 +876,19 @@
             // const c = encodeURIComponent(d);
             // "https://www.cantobuddha.org/wordbook/detail.html?c=" + c
             // fetch("https://www.cantobuddha.org/wordbook/words/"+ c +"/"+ c +".js?v="+Date.now());
+
+            let lastSearch = '';
+            document.querySelector('#search').addEventListener('input', () => {
+              const search = document.querySelector('#search');
+              const text = search?.value;
+              if (text && text.length === 1 && text.codePointAt(0) >= 0x3400) {
+                if (text !== lastSearch) {
+                  lastSearch = text;
+                  runClickable(text);
+                }
+              }
+            });
+
         };
 
         let openedWindow = null;
@@ -977,6 +977,8 @@
             }
 
         });
+
+        
     </script>
 </head>
 <body>
@@ -1107,6 +1109,8 @@
             <div>HOME</div>
             <div>TAB 1</div>
             <div>TAB 2</div>
+            <div style="flex-grow:1"></div>
+            <div><input id="search"></div>
         </div>
         <div id="part1" class="row">
 
