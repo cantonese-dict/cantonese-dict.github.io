@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cantonese-Dict 粵語審音配詞字庫</title>
+</head>
+<body>
+    <style>
+        .header {
+            display: flex;
+            flex-direction: row;
+        }
+    </style>
+    <div class="header">
+        <div>HOME</div>
+        <div>TAB 1</div>
+        <div>TAB 2</div>
+    </div>
+    <!-- <div>
+        
+    </div>
+    <iframe id="iframe1" src="https://www.cantobuddha.org/wordbook/all.html"></iframe>
+    <iframe id="iframe2" src=""></iframe> -->
+    <script>
+        const d = "粵";
+        const c = encodeURIComponent(d);
+        fetch("https://www.cantobuddha.org/wordbook/words/"+ c +"/"+ c +".js?v="+Date.now());
+    </script>
+</body>
+</html>
