@@ -413,7 +413,6 @@
 
         function runInit(){
 
-            let data_ = null;
             const getData = (data)=>{
                 if(typeof data !== 'string')return data;
                 try{
@@ -421,13 +420,7 @@
                 }catch(e){}
                 return data;
             }
-            window.dataLoaded = ()=>{
-                data_ = getData(window.data);
-                window.data = null;
-                document.querySelector('#dataScript')?.remove();
-                if(!data_) return;
-
-                console.log(data_)
+            window.dataLoaded = (data_) => {
 
                 const keys = [
                     "字",
@@ -834,16 +827,36 @@
                 if (span) return span.textContent.trim();
             }
 
+            const dataCacheMap = new Map();
+
             const runClickable = (text) => {
-              document.querySelector('#dataScript')?.remove();
-              const script = document.createElement('script');
-              script.id = 'dataScript';
-              script.addEventListener('load', () => {
-                dataLoaded();
-              });
-              const c = encodeURIComponent(text);
-              script.src = "https://www.cantobuddha.org/wordbook/words/" + c + "/" + c + ".js?v=" + Date.now();
-              document.head.appendChild(script);
+              const cacheData = dataCacheMap.get(text);
+              if (cacheData) {
+                dataLoaded(cacheData);
+              } else {
+                document.querySelector('#dataScript')?.remove();
+                const script = document.createElement('script');
+                script.id = 'dataScript';
+                script.addEventListener('load', () => {
+                  const mData = window.data;
+                  window.data = null;
+                  const d = getData(mData);
+                  if (dataCacheMap.size >= 512) {
+                    const w = [...dataCacheMap.keys()];
+                    for (let i = Math.floor(w.length / 2); i >= 0; i--) {
+                      const key = w[i];
+                      dataCacheMap.delete(key);
+                    }
+                  }
+                  dataCacheMap.set(text, d);
+                  document.querySelector('#dataScript')?.remove();
+                  if (!d) return;
+                  dataLoaded(d);
+                });
+                const c = encodeURIComponent(text);
+                script.src = "https://www.cantobuddha.org/wordbook/words/" + c + "/" + c + ".js?v=" + Date.now();
+                document.head.appendChild(script);
+              }
             }
 
             const table =document.querySelector("#main-table");
