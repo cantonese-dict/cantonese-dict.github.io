@@ -421,7 +421,7 @@
                 }catch(e){}
                 return data;
             }
-            window.dataLoaded = (data_) => {
+            const dataLoaded = (data_) => {
 
                 const keys = [
                     "字",
@@ -459,57 +459,10 @@
                 }
 
 
-            /*
+                part2.querySelector('#char-info')?.remove();
+                part2.querySelector('#char-details')?.remove();
 
-                const table = document.createElement('table');
-                table.id = "char-info";
-
-
-
-                const row1 = table.appendChild(document.createElement('tr'));
-                const row2 = table.appendChild(document.createElement('tr'));
-                const word = `${data_.字 || ""}`;
-                for(const key of keys){
-                    if(key in data_){
-                        row1.appendChild(document.createElement("th")).textContent = key;
-                        const val = data_[key];
-                        if(typeof (val || 0) === 'object' && val.length >= 1){
-                            const div = row2.appendChild(document.createElement("div"));
-                            div.classList.add('listing');
-                            for(const p of val){
-                                div.appendChild(document.createElement("span")).textContent = getVal(p);
-                            }
-                        } else {
-                            const td = document.createElement("td");
-                            if (key === "英譯") td.classList.add("td-english");
-                            if (key === "普通話") td.classList.add("td-pth");
-                            row2.appendChild(td).textContent = getVal(val);
-                            if (word.length === 1 && key === "康熙字典") {
-                                const m = /Pg\.(\d+)/.exec(`${val}`);
-                                if (m && +m[1] >= 1) {
-                                    td.setAttribute('data-kangxi-url', 'https://www.kangxizidian.com/kxhans/' + encodeURIComponent(word) + "#cornerbody1")
-                                }
-                            }
-                            if (word.length === 1 && key === "漢語大字典") {
-                                const m = /Pg\.(\d+)/.exec(`${val}`);
-                                if (m && +m[1] >= 1) {
-                                    td.setAttribute('data-zdic-url', 'https://www.zdic.net/hant/' + encodeURIComponent(word) + "#bhbs")
-                                }
-                            }
-                            if (word.length === 1 && key === "Unicode"){
-
-                                const m = /^U\+[0-9A-F]{4}$/.exec(`${val}`);
-                                if(m && m[0]){
-                                    td.setAttribute('data-unicode-url', 'https://www.compart.com/en/unicode/' + m[0])
-                                }
-                                
-                            }
-                        }
-                    }
-                }
-
-
-                */
+                if (data_ === null) return;
 
                 const table = document.createElement('div');
                 table.id = "char-info";
@@ -541,19 +494,19 @@
 
                         let td = row2;
 
-                        if (word.length === 1 && key === "康熙字典") {
+                        if (singleCharCode(word) >= 0x3400 && key === "康熙字典") {
                             const m = /Pg\.(\d+)/.exec(`${val}`);
                             if (m && +m[1] >= 1) {
                                 td.setAttribute('data-kangxi-url', 'https://www.kangxizidian.com/kxhans/' + encodeURIComponent(word) + "#cornerbody1")
                             }
                         }
-                        if (word.length === 1 && key === "漢語大字典") {
+                        if (singleCharCode(word) >= 0x3400 && key === "漢語大字典") {
                             const m = /Pg\.(\d+)/.exec(`${val}`);
                             if (m && +m[1] >= 1) {
                                 td.setAttribute('data-zdic-url', 'https://www.zdic.net/hant/' + encodeURIComponent(word) + "#bhbs")
                             }
                         }
-                        if (word.length === 1 && key === "Unicode") {
+                        if (singleCharCode(word) >= 0x3400 && key === "Unicode") {
 
                             const m = /^U\+[0-9A-F]{4}$/.exec(`${val}`);
                             if (m && m[0]) {
@@ -674,8 +627,6 @@
 
 
 
-                part2.querySelector('#char-info')?.remove();
-                part2.querySelector('#char-details')?.remove();
 
                 part2.appendChild(table);
                 part2.appendChild(div);
@@ -686,127 +637,127 @@
 
                 /*
 
-                <body onload="loadJSON()">
+                      <body onload="loadJSON()">
 
-        <p id="showTopData"><table style="width: 100%;"><tbody><tr><th style="white-space: nowrap;">字</th><th style="white-space: nowrap;">部首</th><th style="white-space: nowrap;">筆畫</th><th style="white-space: nowrap;">字音分類</th><th style="white-space: nowrap;">大五碼</th><th style="white-space: nowrap;">倉頡碼</th><th style="white-space: nowrap;">頻序</th><th style="white-space: nowrap;">頻次</th><th style="white-space: nowrap;">Unicode</th><th style="white-space: nowrap;">漢語大字典</th><th style="white-space: nowrap;">康熙字典</th><th style="white-space: nowrap;">Matthews</th><th style="white-space: nowrap;">普通話</th><th style="white-space: nowrap;">英譯</th><th style="white-space: nowrap;">配搭點</th></tr><tr><td style="text-align: center; white-space: normal; word-break: break-word;">乖</td><td style="text-align: center; white-space: normal; word-break: break-word;">丿</td><td style="text-align: center; white-space: normal; word-break: break-word;">8</td><td style="text-align: center; white-space: normal; word-break: break-word;">單讀音字</td><td style="text-align: center; white-space: normal; word-break: break-word;">A8C4</td><td style="text-align: center; white-space: normal; word-break: break-word;">竹十中心</td><td style="text-align: center; white-space: normal; word-break: break-word;">3316</td><td style="text-align: center; white-space: normal; word-break: break-word;">76</td><td style="text-align: center; white-space: normal; word-break: break-word;">U+4E56</td><td style="text-align: center; white-space: normal; word-break: break-word;">Pg.0038</td><td style="text-align: center; white-space: normal; word-break: break-word;">Pg.0011.030</td><td style="text-align: center; white-space: normal; word-break: break-word;">No.3532</td><td style="text-align: center; white-space: normal; word-break: break-word;">guai1</td><td style="text-align: center; white-space: normal; word-break: break-word;">rebel; crafty, shrewd</td><td style="text-align: center; white-space: normal; word-break: break-word;">舛, 剌, 賣, 忤</td></tr></tbody></table></p>
+                      <p id="showTopData"><table style="width: 100%;"><tbody><tr><th style="white-space: nowrap;">字</th><th style="white-space: nowrap;">部首</th><th style="white-space: nowrap;">筆畫</th><th style="white-space: nowrap;">字音分類</th><th style="white-space: nowrap;">大五碼</th><th style="white-space: nowrap;">倉頡碼</th><th style="white-space: nowrap;">頻序</th><th style="white-space: nowrap;">頻次</th><th style="white-space: nowrap;">Unicode</th><th style="white-space: nowrap;">漢語大字典</th><th style="white-space: nowrap;">康熙字典</th><th style="white-space: nowrap;">Matthews</th><th style="white-space: nowrap;">普通話</th><th style="white-space: nowrap;">英譯</th><th style="white-space: nowrap;">配搭點</th></tr><tr><td style="text-align: center; white-space: normal; word-break: break-word;">乖</td><td style="text-align: center; white-space: normal; word-break: break-word;">丿</td><td style="text-align: center; white-space: normal; word-break: break-word;">8</td><td style="text-align: center; white-space: normal; word-break: break-word;">單讀音字</td><td style="text-align: center; white-space: normal; word-break: break-word;">A8C4</td><td style="text-align: center; white-space: normal; word-break: break-word;">竹十中心</td><td style="text-align: center; white-space: normal; word-break: break-word;">3316</td><td style="text-align: center; white-space: normal; word-break: break-word;">76</td><td style="text-align: center; white-space: normal; word-break: break-word;">U+4E56</td><td style="text-align: center; white-space: normal; word-break: break-word;">Pg.0038</td><td style="text-align: center; white-space: normal; word-break: break-word;">Pg.0011.030</td><td style="text-align: center; white-space: normal; word-break: break-word;">No.3532</td><td style="text-align: center; white-space: normal; word-break: break-word;">guai1</td><td style="text-align: center; white-space: normal; word-break: break-word;">rebel; crafty, shrewd</td><td style="text-align: center; white-space: normal; word-break: break-word;">舛, 剌, 賣, 忤</td></tr></tbody></table></p>
 
-        <p id="showBottomData"><table style="width: 100%;"><tbody><tr><th style="white-space: nowrap;">音節</th><th style="white-space: nowrap;">粵音</th><th style="white-space: nowrap;">根據</th><th style="white-space: nowrap;">同音字</th><th style="white-space: nowrap;">詞例</th><th style="white-space: nowrap;">備註</th></tr><tr><td style="text-align: center; white-space: normal; word-break: break-word;">gwaai1</td><td style="text-align: center; white-space: normal; word-break: break-word;"><span style="cursor: pointer;">▶</span><span style="color: gray; margin-left: 6px; display: none;">離線</span></td><td style="text-align: center; white-space: normal; word-break: break-word;">黃(p.2), 周(p.2), 李(p.180), 何(p.14)</td><td style="text-align: center; white-space: normal; word-break: break-word;"></td><td style="text-align: center; white-space: normal; word-break: break-word;">乖乖, 乖巧, 乖張, 乖違, 乖舛, 乖戾, 乖僻</td><td style="text-align: center; white-space: normal; word-break: break-word;"></td></tr></tbody></table></p>
+                      <p id="showBottomData"><table style="width: 100%;"><tbody><tr><th style="white-space: nowrap;">音節</th><th style="white-space: nowrap;">粵音</th><th style="white-space: nowrap;">根據</th><th style="white-space: nowrap;">同音字</th><th style="white-space: nowrap;">詞例</th><th style="white-space: nowrap;">備註</th></tr><tr><td style="text-align: center; white-space: normal; word-break: break-word;">gwaai1</td><td style="text-align: center; white-space: normal; word-break: break-word;"><span style="cursor: pointer;">▶</span><span style="color: gray; margin-left: 6px; display: none;">離線</span></td><td style="text-align: center; white-space: normal; word-break: break-word;">黃(p.2), 周(p.2), 李(p.180), 何(p.14)</td><td style="text-align: center; white-space: normal; word-break: break-word;"></td><td style="text-align: center; white-space: normal; word-break: break-word;">乖乖, 乖巧, 乖張, 乖違, 乖舛, 乖戾, 乖僻</td><td style="text-align: center; white-space: normal; word-break: break-word;"></td></tr></tbody></table></p>
 
-        <p id="msg"></p>
+                      <p id="msg"></p>
 
 
 
-    */
+                  */
 
-    /*
+                  /*
 
-    {
-        "字": "代",
-        "部首": "人",
-        "筆畫": "5",
-        "字音分類": "單讀音字",
-        "大五碼": "A54E",
-        "倉頡碼": "人戈心",
-        "頻序": 178,
-        "頻次": 14688,
-        "Unicode": "U+4EE3",
-        "漢語大字典": "Pg.0113",
-        "康熙字典": "Pg.0021.110",
-        "Matthews": "No.5996",
-        "普通話": "dai4",
-        "英譯": "replace,replacement (of person or generation &gt; ); era, generation",
-        "配搭點": [
-            "三",
-            "五",
-            "古",
-            "末",
-            "交",
-            "年",
-            "宋",
-            "取",
-            "庖",
-            "表",
-            "近",
-            "俎",
-            "後",
-            "時",
-            "現",
-            "替",
-            "絕",
-            "傳",
-            "新",
-            "當",
-            "罪",
-            "箸",
-            "蓋",
-            "緩",
-            "謝",
-            "斷"
-        ],
-        "發音": [
-            {
-                "音節": {
-                    "聲母": "d",
-                    "韻母": "oi",
-                    "聲調": "6"
-                },
-                "粵音": "http://humanum.arts.cuhk.edu.hk/Lexis/lexi-can/sound/doi6.wav",
-                "根據": [
-                    "黃(p.36)",
-                    "周(p.4)",
-                    "李(p.64)",
-                    "何(p.261)"
-                ],
-                "同音字": [
-                    "埭",
-                    "紿",
-                    "酨",
-                    "蝳",
-                    "靆",
-                    "駘",
-                    "柋",
-                    "詒",
-                    "祋",
-                    "岱",
-                    "待",
-                    "袋",
-                    "玳",
-                    "逮",
-                    "怠",
-                    "殆",
-                    "黛",
-                    "迨",
-                    "隸"
-                ],
-                "詞例": [
-                    "代替",
-                    "年代",
-                    "代罪羔羊",
-                    "代數",
-                    "代價",
-                    "代表",
-                    "代勞",
-                    "代理",
-                    "代課",
-                    "代銷",
-                    "代步",
-                    "代碼",
-                    "代溝",
-                    "代用品",
-                    "代表作",
-                    "代議政制",
-                    "時代",
-                    "新陳代謝",
-                    "風華絕代",
-                    "改朝換代",
-                    "越俎代庖"
-                ],
-                "備註": null
-            }
-        ]
-    }
+                  {
+                      "字": "代",
+                      "部首": "人",
+                      "筆畫": "5",
+                      "字音分類": "單讀音字",
+                      "大五碼": "A54E",
+                      "倉頡碼": "人戈心",
+                      "頻序": 178,
+                      "頻次": 14688,
+                      "Unicode": "U+4EE3",
+                      "漢語大字典": "Pg.0113",
+                      "康熙字典": "Pg.0021.110",
+                      "Matthews": "No.5996",
+                      "普通話": "dai4",
+                      "英譯": "replace,replacement (of person or generation &gt; ); era, generation",
+                      "配搭點": [
+                          "三",
+                          "五",
+                          "古",
+                          "末",
+                          "交",
+                          "年",
+                          "宋",
+                          "取",
+                          "庖",
+                          "表",
+                          "近",
+                          "俎",
+                          "後",
+                          "時",
+                          "現",
+                          "替",
+                          "絕",
+                          "傳",
+                          "新",
+                          "當",
+                          "罪",
+                          "箸",
+                          "蓋",
+                          "緩",
+                          "謝",
+                          "斷"
+                      ],
+                      "發音": [
+                          {
+                              "音節": {
+                                  "聲母": "d",
+                                  "韻母": "oi",
+                                  "聲調": "6"
+                              },
+                              "粵音": "http://humanum.arts.cuhk.edu.hk/Lexis/lexi-can/sound/doi6.wav",
+                              "根據": [
+                                  "黃(p.36)",
+                                  "周(p.4)",
+                                  "李(p.64)",
+                                  "何(p.261)"
+                              ],
+                              "同音字": [
+                                  "埭",
+                                  "紿",
+                                  "酨",
+                                  "蝳",
+                                  "靆",
+                                  "駘",
+                                  "柋",
+                                  "詒",
+                                  "祋",
+                                  "岱",
+                                  "待",
+                                  "袋",
+                                  "玳",
+                                  "逮",
+                                  "怠",
+                                  "殆",
+                                  "黛",
+                                  "迨",
+                                  "隸"
+                              ],
+                              "詞例": [
+                                  "代替",
+                                  "年代",
+                                  "代罪羔羊",
+                                  "代數",
+                                  "代價",
+                                  "代表",
+                                  "代勞",
+                                  "代理",
+                                  "代課",
+                                  "代銷",
+                                  "代步",
+                                  "代碼",
+                                  "代溝",
+                                  "代用品",
+                                  "代表作",
+                                  "代議政制",
+                                  "時代",
+                                  "新陳代謝",
+                                  "風華絕代",
+                                  "改朝換代",
+                                  "越俎代庖"
+                              ],
+                              "備註": null
+                          }
+                      ]
+                  }
 
-    */
+                  */
 
             }
 
@@ -833,7 +784,7 @@
             const runClickable = (text) => {
               lastSearch = text;
               const cacheData = dataCacheMap.get(text);
-              if (cacheData) {
+              if (cacheData !== undefined) {
                 dataLoaded(cacheData);
               } else {
                 document.querySelector('#dataScript')?.remove();
@@ -842,7 +793,7 @@
                 script.addEventListener('load', () => {
                   const mData = window.data;
                   window.data = null;
-                  const d = getData(mData);
+                  const d = getData(mData) || null;
                   if (dataCacheMap.size >= 512) {
                     const w = [...dataCacheMap.keys()];
                     for (let i = Math.floor(w.length / 2); i >= 0; i--) {
@@ -852,7 +803,20 @@
                   }
                   dataCacheMap.set(text, d);
                   document.querySelector('#dataScript')?.remove();
-                  if (!d) return;
+                  dataLoaded(d);
+                });
+                script.addEventListener('error', ()=>{
+                  window.data = null;
+                  const d = null;
+                  if (dataCacheMap.size >= 512) {
+                    const w = [...dataCacheMap.keys()];
+                    for (let i = Math.floor(w.length / 2); i >= 0; i--) {
+                      const key = w[i];
+                      dataCacheMap.delete(key);
+                    }
+                  }
+                  dataCacheMap.set(text, d);
+                  document.querySelector('#dataScript')?.remove();
                   dataLoaded(d);
                 });
                 const c = encodeURIComponent(text);
@@ -892,11 +856,22 @@
             // "https://www.cantobuddha.org/wordbook/detail.html?c=" + c
             // fetch("https://www.cantobuddha.org/wordbook/words/"+ c +"/"+ c +".js?v="+Date.now());
 
+            const singleCharCode = (text)=>{
+              if (text && typeof text === 'string') {
+                const cp = text.codePointAt(0);
+                if (cp >= 0xFFFF) {
+                  return text.length === 2 ? cp : 0;
+                }
+                return text.length === 1 ? cp : 0;
+              }
+              return null;
+            };
             
             document.querySelector('#search').addEventListener('input', () => {
               const search = document.querySelector('#search');
               const text = search?.value?.trim();
-              if (text && text.length === 1 && text.codePointAt(0) >= 0x3400) {
+              const charCode = singleCharCode(text);
+              if (charCode >= 0x3400) {
                 if (text !== lastSearch) {
                   runClickable(text);
                 }
