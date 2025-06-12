@@ -416,6 +416,10 @@
           display: none;
         }
 
+        .hidden {
+          display: none;
+        }
+
     </style>
     <script>
 
@@ -904,9 +908,17 @@
 
             let cid = 0;
             let matchString_ = "";
+            const noRecordFn = () => {
+              for (const elm of document.querySelectorAll('[search-filter]')) elm.removeAttribute('search-filter');
+              for (const elm of document.querySelectorAll('[search-filtered-char]')) elm.removeAttribute('search-filtered-char');
+              document.querySelector('#main-table')?.classList?.add('hidden');
+            }
+            document.querySelector('#search').addEventListener('blur', () => {
+                document.querySelector('#main-table')?.classList?.remove('hidden');
+            });
             document.querySelector('#search').addEventListener('input', () => {
-              if (cid) clearTimeout(cid);
-              cid = setTimeout(() => {
+              // if (cid) clearTimeout(cid);
+              // cid = setTimeout(() => {
                 let matchString = '';
 
                 const search = document.querySelector('#search');
@@ -915,8 +927,7 @@
                 if (cps.length === 0) {
                   matchString_ = '';
                   matchString = '';
-                  for (const elm of document.querySelectorAll('[search-filter]')) elm.removeAttribute('search-filter');
-                  for (const elm of document.querySelectorAll('[search-filtered-char]')) elm.removeAttribute('search-filtered-char');
+                  noRecordFn();
                   return;
                 }
                 const dt = `dt${Date.now()}`;
@@ -932,8 +943,7 @@
                 if (matchString_ === '') {
                   matchString_ = '';
                   matchString = '';
-                  for (const elm of document.querySelectorAll('[search-filter]')) elm.removeAttribute('search-filter');
-                  for (const elm of document.querySelectorAll('[search-filtered-char]')) elm.removeAttribute('search-filtered-char');
+                  noRecordFn();
                   return;
                 }
                 const s = new Set(match);
@@ -958,11 +968,11 @@
                       elm.setAttribute('search-filter', '0');
                     }
                   }
+                  document.querySelector('#main-table')?.classList?.remove('hidden');
                 } else {
-                  for (const elm of document.querySelectorAll('[search-filter]')) elm.removeAttribute('search-filter');
-                  for (const elm of document.querySelectorAll('[search-filtered-char]')) elm.removeAttribute('search-filtered-char');
+                  noRecordFn();
                 }
-              }, 100);
+              // }, 100);
             });
 
             setTimeout(() => {
