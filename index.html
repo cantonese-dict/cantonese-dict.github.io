@@ -340,7 +340,7 @@
             white-space: break-spaces;
         }
         */
-        [data-zdic-url], [data-kangxi-url], [data-unicode-url] {
+        [data-zdic-url], [data-kangxi-url], [data-unicode-url], [data-wordshk-url] {
             cursor: pointer;
         }
 
@@ -477,6 +477,7 @@
                         tableCell.appendChild(row2);
                         row2.textContent = word;
                         tableCell.classList.add("char-info-table-cell0")
+                        row2.setAttribute('data-wordshk-url', 'https://words.hk/zidin/' + encodeURIComponent(word) + "#");
                         continue;
                     }
                     if (key in data_) {
@@ -915,55 +916,79 @@
 
         }
 
+        const getTargetURL = (target) => {
+          if (!(target instanceof Node)) {
+            return null;
+          }
+          while (target && target.nodeType !== 1) {
+            target = target.parentNode;
+            if (!(target instanceof Node)) return null;
+          }
+          if (!target || target.nodeType !== 1) return null;
+          const arr = [
+            'data-audio-url',
+            'data-kangxi-url',
+            'data-zdic-url',
+            'data-unicode-url',
+            'data-wordshk-url'
+          ];
+          for (const attr of arr) {
+            const elm = target.closest(`[${attr}]`);
+            if (elm) return [elm, attr];
+          }
+          return null;
+        };
+
         document.addEventListener("click", function(event) {
-        // Find the closest element with a data-audio-url attribute
-        const target = event.target.closest('[data-audio-url]');
-        const target2 = event.target.closest('[data-kangxi-url]');
-        const target3 = event.target.closest('[data-zdic-url]');
-        const target4 = event.target.closest('[data-unicode-url]');
-        
-        // If such an element exists
-        if (target && !document.documentElement.classList.contains("loading-audio")&& !document.documentElement.classList.contains("playing-audio")) {
-            const audioUrl = target.getAttribute('data-audio-url');
-            if (audioUrl) {
-                target.classList.add('active');
-                document.documentElement.classList.add("loading-audio");
-                document.documentElement.classList.remove("playing-audio");
+          // Find the closest element with a data-audio-url attribute
+          const s = getTargetURL(event.target);
+          if (!s) return;
+          const [target, attr] = s;
+          
+          // If such an element exists
+          if (target && attr === 'data-audio-url' && !document.documentElement.classList.contains("loading-audio")&& !document.documentElement.classList.contains("playing-audio")) {
+              const audioUrl = target.getAttribute('data-audio-url');
+              if (audioUrl) {
+                  target.classList.add('active');
+                  document.documentElement.classList.add("loading-audio");
+                  document.documentElement.classList.remove("playing-audio");
 
-                if (target.__audioUrl__ !== audioUrl) {
-                    target.__audioUrl__ = null;
-                }
-                if (!target.__audioUrl__) target.__audioCache__ = null;
-                console.log(1883, target.__audioCache__)
-                target.__audioCache__ = target.__audioCache__ || createAudioElement(audioUrl);
-                target.__audioUrl__ = audioUrl;
-                const audio = target.__audioCache__;
+                  if (target.__audioUrl__ !== audioUrl) {
+                      target.__audioUrl__ = null;
+                  }
+                  if (!target.__audioUrl__) target.__audioCache__ = null;
+                  console.log(1883, target.__audioCache__)
+                  target.__audioCache__ = target.__audioCache__ || createAudioElement(audioUrl);
+                  target.__audioUrl__ = audioUrl;
+                  const audio = target.__audioCache__;
 
-                audio.play().then(() => {
+                  audio.play().then(() => {
+                      console.log("Audio OK.");
+                  }).catch(error => {
+                      document.documentElement.classList.remove("loading-audio");
+                      document.documentElement.classList.remove("playing-audio");
+                      target.classList.remove('active');
+                      console.error("Audio playback failed:", error);
+                  });
 
-                    console.log("Audio OK.");
-                }).catch(error => {
-                    document.documentElement.classList.remove("loading-audio");
-                    document.documentElement.classList.remove("playing-audio");
-                    target.classList.remove('active');
-                    console.error("Audio playback failed:", error);
-                });
+              }
+          }
 
-            }
-        }
+          if (target && attr === 'data-kangxi-url') {
+            openedWindow = window.open(target.getAttribute('data-kangxi-url'), 'win_kangxi_288', 'width=480,height=' + (screen.height - 16) + ',menubar=no,toolbar=no,location=no,status=no,resizable=no,scrollbars=yes')
+          }
 
-        if (!target && target2 && !target3) {
-            openedWindow = window.open(target2.getAttribute('data-kangxi-url'), 'win_kangxi_288', 'width=480,height='+(screen.height - 16)+',menubar=no,toolbar=no,location=no,status=no,resizable=no,scrollbars=yes')
-        }
+          if (target && attr === 'data-zdic-url') {
+            openedWindow = window.open(target.getAttribute('data-zdic-url'), 'win_zdic_288', 'width=480,height=' + (screen.height - 16) + ',menubar=no,toolbar=no,location=no,status=no,resizable=no,scrollbars=yes')
+          }
 
+          if (target && attr === 'data-unicode-url') {
+            openedWindow = window.open(target.getAttribute('data-unicode-url'), 'win_unicode_288', 'width=480,height=' + (screen.height - 16) + ',menubar=no,toolbar=no,location=no,status=no,resizable=no,scrollbars=yes')
+          }
 
-        if (!target && target3 && !target2) {
-            openedWindow = window.open(target3.getAttribute('data-zdic-url'), 'win_kangxi_288', 'width=480,height='+(screen.height - 16)+',menubar=no,toolbar=no,location=no,status=no,resizable=no,scrollbars=yes')
-        }
-
-            if (!target && target4) {
-                openedWindow = window.open(target4.getAttribute('data-unicode-url'), 'win_kangxi_288', 'width=480,height=' + (screen.height - 16) + ',menubar=no,toolbar=no,location=no,status=no,resizable=no,scrollbars=yes')
-            }
+          if (target && attr === 'data-wordshk-url') {
+            openedWindow = window.open(target.getAttribute('data-wordshk-url'), 'win_wordshk_288', 'width=480,height=' + (screen.height - 16) + ',menubar=no,toolbar=no,location=no,status=no,resizable=no,scrollbars=yes')
+          }
 
         });
 
