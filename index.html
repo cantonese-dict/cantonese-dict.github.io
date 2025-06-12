@@ -916,6 +916,7 @@
                   matchString_ = '';
                   matchString = '';
                   for (const elm of document.querySelectorAll('[search-filter]')) elm.removeAttribute('search-filter');
+                  for (const elm of document.querySelectorAll('[search-filtered-char]')) elm.removeAttribute('search-filtered-char');
                   return;
                 }
                 const dt = `dt${Date.now()}`;
@@ -932,6 +933,7 @@
                   matchString_ = '';
                   matchString = '';
                   for (const elm of document.querySelectorAll('[search-filter]')) elm.removeAttribute('search-filter');
+                  for (const elm of document.querySelectorAll('[search-filtered-char]')) elm.removeAttribute('search-filtered-char');
                   return;
                 }
                 const s = new Set(match);
@@ -957,9 +959,8 @@
                     }
                   }
                 } else {
-                  for (const elm of document.querySelectorAll(`[search-filter]`)) {
-                    elm.removeAttribute('search-filter');
-                  }
+                  for (const elm of document.querySelectorAll('[search-filter]')) elm.removeAttribute('search-filter');
+                  for (const elm of document.querySelectorAll('[search-filtered-char]')) elm.removeAttribute('search-filtered-char');
                 }
               }, 100);
             });
