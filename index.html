@@ -340,7 +340,7 @@
             white-space: break-spaces;
         }
         */
-        [data-zdic-url], [data-kangxi-url], [data-unicode-url], [data-wordshk-url] {
+        [data-zdic-url], [data-kangxi-url], [data-unicode-url], [data-wordshk-url], [data-cj-url] {
             cursor: pointer;
         }
 
@@ -507,26 +507,34 @@
 
                         let td = row2;
 
-                        if (singleCharCode(word) >= 0x3400 && key === "康熙字典") {
-                            const m = /Pg\.(\d+)/.exec(`${val}`);
-                            if (m && +m[1] >= 1) {
-                                td.setAttribute('data-kangxi-url', 'https://www.kangxizidian.com/kxhans/' + encodeURIComponent(word) + "#cornerbody1")
-                            }
-                        }
-                        if (singleCharCode(word) >= 0x3400 && key === "漢語大字典") {
-                            const m = /Pg\.(\d+)/.exec(`${val}`);
-                            if (m && +m[1] >= 1) {
-                                td.setAttribute('data-zdic-url', 'https://www.zdic.net/hant/' + encodeURIComponent(word) + "#bhbs")
-                            }
-                        }
-                        if (singleCharCode(word) >= 0x3400 && key === "Unicode") {
+                        if (singleCharCode(word) >= 0x3400){
 
-                            const m = /^U\+[0-9A-F]{4}$/.exec(`${val}`);
-                            if (m && m[0]) {
-                                td.setAttribute('data-unicode-url', 'https://www.compart.com/en/unicode/' + m[0])
-                            }
+                          if (key === "倉頡碼" && typeof (val || 0) === 'string' && val.length) {
+                            td.setAttribute('data-cj-url', 'https://www.hkcards.com/cj/cj-char-' + encodeURI(word) + '.html')
+                          }
+                          if (key === "康熙字典") {
+                              const m = /Pg\.(\d+)/.exec(`${val}`);
+                              if (m && +m[1] >= 1) {
+                                  td.setAttribute('data-kangxi-url', 'https://www.kangxizidian.com/kxhans/' + encodeURIComponent(word) + "#cornerbody1")
+                              }
+                          }
+                          if (key === "漢語大字典") {
+                              const m = /Pg\.(\d+)/.exec(`${val}`);
+                              if (m && +m[1] >= 1) {
+                                  td.setAttribute('data-zdic-url', 'https://www.zdic.net/hant/' + encodeURIComponent(word) + "#bhbs")
+                              }
+                          }
+                          if (key === "Unicode") {
+
+                              const m = /^U\+[0-9A-F]{4}$/.exec(`${val}`);
+                              if (m && m[0]) {
+                                  td.setAttribute('data-unicode-url', 'https://www.compart.com/en/unicode/' + m[0])
+                              }
+
+                          }
 
                         }
+
 
                     }
                 }
@@ -1026,7 +1034,8 @@
             'data-kangxi-url',
             'data-zdic-url',
             'data-unicode-url',
-            'data-wordshk-url'
+            'data-wordshk-url',
+            'data-cj-url'
           ];
           for (const attr of arr) {
             const elm = target.closest(`[${attr}]`);
@@ -1084,6 +1093,10 @@
 
           if (target && attr === 'data-wordshk-url') {
             openedWindow = window.open(target.getAttribute('data-wordshk-url'), 'win_wordshk_288', 'width=480,height=' + (screen.height - 16) + ',menubar=no,toolbar=no,location=no,status=no,resizable=no,scrollbars=yes')
+          }
+
+          if (target && attr === 'data-cj-url') {
+            openedWindow = window.open(target.getAttribute('data-cj-url'), 'win_cj_288', 'width=480,height=' + (screen.height - 16) + ',menubar=no,toolbar=no,location=no,status=no,resizable=no,scrollbars=yes')
           }
 
         });
