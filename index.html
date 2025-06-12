@@ -928,6 +928,12 @@
                 }
                 if (matchString === matchString_) return;
                 matchString_ = matchString;
+                if (matchString_ === '') {
+                  matchString_ = '';
+                  matchString = '';
+                  for (const elm of document.querySelectorAll('[search-filter]')) elm.removeAttribute('search-filter');
+                  return;
+                }
                 const s = new Set(match);
                 match.length = 0;
                 let qb = false;
