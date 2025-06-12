@@ -902,45 +902,60 @@
               return codePoints;
             }
 
-            document.querySelector('#search').addEventListener('input', () => {
-              const search = document.querySelector('#search');
-              const text = search?.value?.trim();
-              const cps = getAllCodePoints(text || "");
-              if (cps.length === 0) {
-                for (const elm of document.querySelectorAll('[search-filter]')) elm.removeAttribute('search-filter');
-              }
-              const dt = `dt${Date.now()}`;
-              const match = [];
-              for (const cp of cps) {
-                match.push(...document.querySelectorAll(`a[href="detail.html?c=${String.fromCodePoint(cp)}"]`));
-              }
-              const s = new Set(match);
-              match.length = 0;
-              let qb = false;
-              for (const q of s) {
-                const p = q.closest('tr');
-                if (p) {
-                  q.setAttribute('search-filtered-char', dt);
-                  p.setAttribute('search-filter', dt);
-                  qb = true;
-                }
-              }
+            let cid = 0;
+            let matchString_ = "";
+              document.querySelector('#search').addEventListener('input', () => {
+              if (cid) clearTimeout(cid);
+              cid = setTimeout(() => {
+                let matchString = '';
 
-              for (const elm of document.querySelectorAll(`[search-filtered-char]:not([search-filtered-char="${dt}"])`)) {
-                elm.removeAttribute('search-filtered-char');
-              }
-              if (qb) {
-                for (const elm of document.querySelectorAll(`[search-filter^="dt"], #main-table tbody tr:not([search-filter])`)) {
-                  const v = elm.getAttribute('search-filter');
-                  if (v !== '0' && v !== dt) {
-                    elm.setAttribute('search-filter', '0');
+                const search = document.querySelector('#search');
+                const text = search?.value?.trim();
+                const cps = getAllCodePoints(text || "");
+                if (cps.length === 0) {
+                  matchString_ = '';
+                  matchString = '';
+                  for (const elm of document.querySelectorAll('[search-filter]')) elm.removeAttribute('search-filter');
+                  return;
+                }
+                const dt = `dt${Date.now()}`;
+                const match = [];
+                for (const cp of cps) {
+                  const x = document.querySelectorAll(`a[href="detail.html?c=${String.fromCodePoint(cp)}"]`);
+                  if (x.length === 0) continue;
+                  matchString += `|${x}|`
+                  match.push(...x);
+                }
+                if (matchString === matchString_) return;
+                matchString_ = matchString;
+                const s = new Set(match);
+                match.length = 0;
+                let qb = false;
+                for (const q of s) {
+                  const p = q.closest('tr');
+                  if (p) {
+                    q.setAttribute('search-filtered-char', dt);
+                    p.setAttribute('search-filter', dt);
+                    qb = true;
                   }
                 }
-              } else {
-                for (const elm of document.querySelectorAll(`[search-filter]`)) {
-                  elm.removeAttribute('search-filter');
+
+                for (const elm of document.querySelectorAll(`[search-filtered-char]:not([search-filtered-char="${dt}"])`)) {
+                  elm.removeAttribute('search-filtered-char');
                 }
-              }
+                if (qb) {
+                  for (const elm of document.querySelectorAll(`[search-filter^="dt"], #main-table tbody tr:not([search-filter])`)) {
+                    const v = elm.getAttribute('search-filter');
+                    if (v !== '0' && v !== dt) {
+                      elm.setAttribute('search-filter', '0');
+                    }
+                  }
+                } else {
+                  for (const elm of document.querySelectorAll(`[search-filter]`)) {
+                    elm.removeAttribute('search-filter');
+                  }
+                }
+              }, 100);
             });
 
             setTimeout(() => {
